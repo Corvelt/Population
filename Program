@@ -3,8 +3,8 @@
  * Author : Christopher DeDear */
 
 using System;
-
-namespace Population
+using  System.IO;
+namespace ConsoleApplication2
 {
     // Person Object with birth and death year
     class Person
@@ -24,10 +24,10 @@ namespace Population
         public int YearDied { get { return yearDied; } }
        
 
-        public void Output()
+        public string Output()
         {
-            Console.WriteLine(yearBorn + " - " + yearDied );
-
+            string output = yearBorn + " - " + yearDied;
+            return output;
         }
     }
 
@@ -36,19 +36,20 @@ namespace Population
         // Const Ints used for restraints
         const int MIN_YEAR = 1900;
         const int MAX_YEAR = 2000;
-
+        
         // Main 
         static void Main(string[] args)
         {
             // Set the variables to be used to display the correct info
             int MaxAlive = 0;
             int MaxYear = 0;
-
+            StreamWriter swriter = new StreamWriter(@"C:\WriteLines.txt", true);
+            
             // Set up the dataset with the appropriate ammount of items
             Person[] persons = new Person[250];
            
             // Run the function to populate the dataset with random data
-            SetPopulation(persons);
+            SetPopulation(persons, swriter);
 
             // Array used to span the years 1900 to 2000
             int[] years = new int[101];
@@ -66,7 +67,7 @@ namespace Population
             // Iterate through year array to set MaxAlive, MaxYear and outut yearly info
             for (int nYearIt = 0; nYearIt < years.Length; ++nYearIt)
             {
-                Console.WriteLine("year " + (MIN_YEAR + nYearIt) + "; Amount alive: " + years[nYearIt]);
+                swriter.WriteLine("year " + (MIN_YEAR + nYearIt) + "; Amount alive: " + years[nYearIt]);
                 if(years[nYearIt] > MaxAlive)
                 {
                     MaxAlive = years[nYearIt];
@@ -75,11 +76,12 @@ namespace Population
             }
           
             // Output the correct info
-            Console.WriteLine("The year with the max people alive is: " + MaxYear + " with " + MaxAlive + " people alive.");  
+            swriter.WriteLine( "The year with the max people alive is: " + MaxYear + " with " + MaxAlive + " people alive.");  
+            swriter.Close();
         }
 
         // Sets the populations dataset
-        public static void SetPopulation(Person[] array)
+        public static void SetPopulation(Person[] array, StreamWriter sw)
         {
             Random r = new Random();
             int born = 0;
@@ -93,9 +95,10 @@ namespace Population
                 array[i] = new Person(born, r.Next(born, MAX_YEAR + 1));     
 
                 // Output the persons data for verification
-                array[i].Output();
+                sw.WriteLine( array[i].Output());
             }
 
         }
     }
 }
+
